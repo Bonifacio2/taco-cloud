@@ -8,10 +8,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import sia.tacocloud.Ingredient.Type;
+
+import javax.validation.Valid;
 
 
 @Slf4j
@@ -39,7 +42,7 @@ public class DesignTacoController {
             model.addAttribute(type.toString().toLowerCase(), filterByType(ingredients, type));
         }
 
-        model.addAttribute("design", null);
+        model.addAttribute("design", new Taco());
 
         return "design";
     }
@@ -55,8 +58,13 @@ public class DesignTacoController {
     }
 
     @PostMapping
-    public String processDesign(){
-        log.info("Processing design:");
+    public String processDesign(@Valid Taco design, Errors errors){
+        if (errors.hasErrors()) {
+            return "design";
+        }
+
+        log.info("Processing design:" + design);
+
         return "redirect:/orders/current";
     }
 }
